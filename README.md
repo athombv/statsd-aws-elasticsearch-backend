@@ -1,7 +1,7 @@
-statsd-elasticsearch-backend
+statsd-aws-elasticsearch-backend
 ============================
 
-Elasticsearch backend for statsd
+AWS Elasticsearch backend for statsd. Leverages EC2 instance profile credentials to send signed requests to ES.
 
 ## Overview
 
@@ -14,14 +14,14 @@ Originally written by Github user rameshpy, this library was created as a featur
 ## Installation
 
     $ cd /path/to/statsd
-    $ npm install git://github.com/markkimsal/statsd-elasticsearch-backend.git
+    $ npm install git://github.com/athombv/statsd-aws-elasticsearch-backend
     
 To install from behind a proxy server:
 
     $ export https_proxy=http://your.proxyserver.org:8080
     $ export http_proxy=http://your.proxyserver.org:8080
     $ cd /path/to/statsd
-    $ npm install git+https://github.com/markkimsal/statsd-elasticsearch-backend.git
+    $ npm install git+https://github.com/athombv/statsd-aws-elasticsearch-backend.git
 
 
 ## Configuration
@@ -31,11 +31,11 @@ Add a structure to your configuration called "elasticsearch"
 
 ```js
 
- backends: [ 'statsd-elasticsearch-backend', 'other-backends'],
+ backends: [ 'statsd-aws-elasticsearch-backend'],
  debug: true,
  elasticsearch: {
-	 port:          9200,
-	 host:          "localhost",
+	 host:          "http://search-foo-bar.eu-west-1.es.amazonaws.com",
+   region:        "eu-west-1",
 	 path:          "/",
 	 indexPrefix:   "statsd",
 	 //indexTimestamp: "year",  //for index statsd-2015 
@@ -45,7 +45,7 @@ Add a structure to your configuration called "elasticsearch"
 	 timerType:     "timer",
 	 timerDataType: "timer_data",
 	 gaugeDataType: "gauge",
-     formatter:     "default_format"
+   formatter:     "default_format"
  }
 ```
 
@@ -83,9 +83,9 @@ To configure Elasticsearch to automatically apply index template settings based 
 
 From your etc/statsd installation type the following to get the basic template mapping
 ```
-sh  node_modules/statsd-elasticsearch-backend/es-index-template.sh
+sh  node_modules/statsd-aws-elasticsearch-backend/es-index-template.sh
 # if your ES is on another machine or port
-ES_HOST=10.1.10.200 ES_PORT=9201 sh node_modules/statsd-elasticsearch-backend/es-index-template.sh
+ES_HOST=10.1.10.200 ES_PORT=9201 sh node_modules/statsd-aws-elasticsearch-backend/es-index-template.sh
 ```
 Without this, your timestamps will not be interpreted as timestamps.
 
@@ -149,7 +149,7 @@ Look at lib/default\_format.js for a template to build your own.
 In order to use basic auth in your application, add two keys to configuration of application:
 
 ```js
- backends: [ 'statsd-elasticsearch-backend', 'other-backends'],
+ backends: [ 'statsd-aws-elasticsearch-backend'],
  debug: true,
  elasticsearch: {
     ...
